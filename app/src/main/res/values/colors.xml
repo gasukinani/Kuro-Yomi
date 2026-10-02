@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="kuro_bg">#050508</color>
+    <color name="kuro_surface">#0F1016</color>
+    <color name="kuro_card">#161822</color>
+    <color name="kuro_crimson">#FF2A55</color>
+    <color name="kuro_text_main">#FFFFFF</color>
+    <color name="kuro_text_sub">#8E92A4</color>
+</resources>
