@@ -20,14 +20,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      # Naka-lock sa Gradle 8.5 para 100% compatible sa Android Plugin
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.5'
 
-      # Kusa itong bubuo ng Gradle Wrapper at APK nang hindi kailangan ng local AIDE
       - name: Build Debug APK
-        run: |
-          gradle wrapper
-          ./gradlew assembleDebug --stacktrace
+        run: gradle assembleDebug --stacktrace
 
       - name: Upload KuroYomi APK
         uses: actions/upload-artifact@v4
