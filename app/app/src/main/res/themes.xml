@@ -2,9 +2,17 @@
 <resources>
     <string name="app_name">KuroYomi</string>
 
+    <color name="kuro_bg">#050508</color>
+    <color name="kuro_surface">#0F1016</color>
+    <color name="kuro_card">#161822</color>
+    <color name="kuro_crimson">#FF2A55</color>
+    <color name="kuro_text_main">#FFFFFF</color>
+    <color name="kuro_text_sub">#8E92A4</color>
+
     <style name="Theme.KuroYomi" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:statusBarColor">#08080A</item>
-        <item name="android:navigationBarColor">#08080A</item>
-        <item name="android:windowBackground">#08080A</item>
+        <item name="android:statusBarColor">@color/kuro_bg</item>
+        <item name="android:navigationBarColor">@color/kuro_bg</item>
+        <item name="android:windowBackground">@color/kuro_bg</item>
+        <item name="colorPrimary">@color/kuro_crimson</item>
     </style>
 </resources>
