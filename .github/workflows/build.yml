@@ -5,6 +5,10 @@ on:
     branches: [ "master", "main" ]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: Build Android APK
@@ -20,15 +24,37 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # Naka-lock sa Gradle 8.5 para 100% compatible sa Android Plugin
-      - name: Setup Gradle
+      # Naka-disable ang cache para maiwasan ang "Services not available" error ng GitHub
+      - name: Setup Gradle 8.5
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: '8.5'
+          cache-disabled: true
 
+      # Auto-Fix Script: Kusa nitong aayusin ang configuration bago mag-build
+      - name: Auto-fix Project Files & Config
+        run: |
+          echo "Setting up proper gradle.properties..."
+          cat << 'EOF' > gradle.properties
+          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+          android.useAndroidX=true
+          android.nonTransitiveRClass=true
+          EOF
+
+          echo "Fixing AndroidManifest private icon..."
+          if [ -f app/src/main/AndroidManifest.xml ]; then
+            sed -i '/android:icon="@android:drawable\/sym_def_app_icon"/d' app/src/main/AndroidManifest.xml || true
+          fi
+
+          echo "Generating Gradle 8.5 Wrapper..."
+          gradle wrapper --gradle-version 8.5 --distribution-type bin
+          chmod +x gradlew
+
+      # Pag-compile ng APK
       - name: Build Debug APK
-        run: gradle assembleDebug --stacktrace
+        run: ./gradlew assembleDebug --stacktrace --no-daemon
 
+      # Pag-upload ng APK para ma-download
       - name: Upload KuroYomi APK
         uses: actions/upload-artifact@v4
         with:
