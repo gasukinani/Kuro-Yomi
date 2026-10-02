@@ -30,51 +30,51 @@ jobs:
           gradle-version: '8.5'
           cache-disabled: true
 
-      # ========================================================
-      # 🛠️ MASTER AUTO-FIXER: Aayusin lahat ng errors bago mag-build
-      # ========================================================
       - name: Master Auto-Fixer Script
         run: |
-          echo "=== 1. Gumagawa ng malinis na gradle.properties ==="
+          echo "=== 1. Gumagawa ng gradle.properties ==="
           cat << 'EOF' > gradle.properties
           org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
           android.useAndroidX=true
           android.nonTransitiveRClass=true
           EOF
 
-          echo "=== 2. Auto-Inject ng CardView Dependency kung sakaling kulang ==="
+          echo "=== 2. Auto-Create ng colors.xml para hindi mag-AAPT error ==="
+          mkdir -p app/src/main/res/values
+          cat << 'EOF' > app/src/main/res/values/colors.xml
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <color name="kuro_bg">#050508</color>
+              <color name="kuro_surface">#0F1016</color>
+              <color name="kuro_card">#161822</color>
+              <color name="kuro_crimson">#FF2A55</color>
+              <color name="kuro_text_main">#FFFFFF</color>
+              <color name="kuro_text_sub">#8E92A4</color>
+          </resources>
+          EOF
+
+          echo "=== 3. Auto-Inject ng CardView Dependency ==="
           if [ -f app/build.gradle.kts ]; then
             if ! grep -q "cardview" app/build.gradle.kts; then
               sed -i '/dependencies {/a \    implementation("androidx.cardview:cardview:1.0.0")' app/build.gradle.kts
-              echo "Added CardView dependency!"
             fi
-            # I-disable ang Lint abort para hindi huminto ang build sa warnings
             if ! grep -q "abortOnError" app/build.gradle.kts; then
               sed -i '/android {/a \    lint { abortOnError = false; checkReleaseBuilds = false }' app/build.gradle.kts
-              echo "Disabled lint abort!"
             fi
           fi
 
-          echo "=== 3. Tinatanggal ang private icon error sa AndroidManifest ==="
+          echo "=== 4. Tinatanggal ang private icon error sa AndroidManifest ==="
           if [ -f app/src/main/AndroidManifest.xml ]; then
             sed -i '/sym_def_app_icon/d' app/src/main/AndroidManifest.xml || true
           fi
 
-          echo "=== 4. Bumubuo ng official Gradle 8.5 Wrapper ==="
+          echo "=== 5. Wrapper Setup ==="
           gradle wrapper --gradle-version 8.5 --distribution-type bin
           chmod +x gradlew
 
-          echo "=== All Auto-Fixes Applied Successfully! ==="
-
-      # ========================================================
-      # 🚀 COMPILATION STEP
-      # ========================================================
       - name: Build Debug APK
         run: ./gradlew assembleDebug --stacktrace --no-daemon
 
-      # ========================================================
-      # 📦 ARTIFACT UPLOAD
-      # ========================================================
       - name: Upload KuroYomi APK
         uses: actions/upload-artifact@v4
         with:
