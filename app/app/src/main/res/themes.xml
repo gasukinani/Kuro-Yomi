@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">KuroYomi</string>
+
+    <style name="Theme.KuroYomi" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">#08080A</item>
+        <item name="android:navigationBarColor">#08080A</item>
+        <item name="android:windowBackground">#08080A</item>
+    </style>
+</resources>
